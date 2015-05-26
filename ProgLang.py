@@ -7,8 +7,7 @@ class ProgLang:
 		# lexical: lexical analyser: feed raw input and output lexemes
 		# syntax: syntax analyser: feed lexemes and output syntactical structure
 		# semantic: semantics analyser: feed syntactical structure and apply meaning and execute
-		self.lexical = LexicalAnalyser( self.inFileName )
-		self.syntax = SyntaxAnalyser()
+		self.parser = RecursiveDescent( self.inFileName )
 		self.semantic = SemanticsAnalyser()
 		self.runProgram()
 
