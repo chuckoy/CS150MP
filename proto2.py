@@ -6,8 +6,9 @@ import tkFileDialog
 import tkMessageBox
 
 class MenuBar(Tkinter.Menu):
-    def __init__(self, parent):
+    def __init__(self, parent,textPad):
         Tkinter.Menu.__init__(self, parent)
+        self.textPad=textPad
         fileMenu = Tkinter.Menu(self, tearoff=False)
         self.add_cascade(label="File",underline=0, menu=fileMenu)
         fileMenu.add_command(label="New File", underline=0, command=self.quit)        
@@ -18,11 +19,11 @@ class MenuBar(Tkinter.Menu):
         self.add_command(label="Run", underline=0, command=self.quit)
 
     def open_command(self):
-        # file = tkFileDialog.askopenfile(parent=root,mode='rb',title='Select a file')
-        # if file != None:
-        #     contents = file.read()
-        #     textPad.insert('1.0',contents)
-        #     file.close()
+        file = tkFileDialog.askopenfile(parent=self,mode='rb',title='Select a file')
+        if file != None:
+            contents = file.read()
+            self.textPad.insert('1.0',contents)
+            file.close()
         sys.exit(0)
 
     def quit(self):
@@ -33,7 +34,7 @@ class App(Tkinter.Tk):
         Tkinter.Tk.__init__(self)
         textPad=ScrolledText(master=self,wrap='word',width=120,height=20)
         interpreter=ScrolledText(master=self,wrap='word',width=120,height=20)
-        menubar = MenuBar(self)
+        menubar = MenuBar(self,textPad)
         
         self.config(menu=menubar)
         #textPad.grid(row=0,column=0)
