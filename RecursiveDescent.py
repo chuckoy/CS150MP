@@ -3,19 +3,13 @@ class RecursiveDescent:
 		:param inFileName:  name of input file
 		:param resWords: reservedWords class instance
 	""" 
-	def __init__( self, inFileName, dicts ):
+	def __init__( self, tokens, dicts ):
 		# open file and store pointer to in_fp
-		in_fp = open( inFileName, 'r' )
-		self.token = 0
+		self.tokens = tokens
 		self.noParen = 0
 
-		lexeme = []
-		charClass = 0
-		nextChar = ""
-		nextToken = 0
-
-		TOKEN = dicts.getTokenDict()
-		RESERVED_WORDS = dicts.getReservedWordsDict()
+		self.TOKEN = dicts.getTokenDict()
+		self.RESERVED_WORDS = dicts.getReservedWordsDict()
 		"""
 			ERROR CODES:
 			100	:	Reserved word conflict
