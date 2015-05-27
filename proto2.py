@@ -11,13 +11,20 @@ class MenuBar(Tkinter.Menu):
         self.textPad=textPad
         fileMenu = Tkinter.Menu(self, tearoff=False)
         self.add_cascade(label="File",underline=0, menu=fileMenu)
-        fileMenu.add_command(label="New File", underline=0, command=self.quit)        
+        fileMenu.add_command(label="New File", underline=0, command=self.new_command)        
         fileMenu.add_command(label="Open File", underline=0, command=self.open_command)
         fileMenu.add_command(label="Save", underline=0,command=self.quit)
         fileMenu.add_command(label="Save As", underline=5,command=self.saveas_command)          
         fileMenu.add_command(label="Exit", underline=0, command=self.quit)
         self.add_command(label="Run", underline=0, command=self.quit)
 
+    def new_command(self):
+        if len(str(self.textPad.get(1.0, END)))>1:
+            answer=tkMessageBox.askyesno('Save File!','Do you want to save file?')
+            if answer == True:
+                self.saveas_command()
+        self.textPad.delete('1.0', END) 
+    
     def open_command(self):
         file = tkFileDialog.askopenfile(parent=self,mode='rb',title='Select a file')
         if file != None:
