@@ -1,4 +1,4 @@
-class RecursiveDescent:
+class recursive_descent:
 	"""
 		:param inFileName:  name of input file
 		:param resWords: reservedWords class instance
