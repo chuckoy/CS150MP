@@ -10,9 +10,9 @@ class lexical_analyser:
 		self.inFileName = inFileName
 		# character classes
 		self.CHAR_CLASSES = {	'EOF' : -1,	
-							'LETTER' : 0,
-							'DIGIT' : 1,
-							'UNKNOWN' : 99 }
+								'LETTER' : 0,
+								'DIGIT' : 1,
+								'UNKNOWN' : 99 }
 		self.RESERVED_WORDS = dicts.getReservedWordsDict()
 		self.TOKEN = dicts.getTokenDict()
 
@@ -24,6 +24,7 @@ class lexical_analyser:
 		with open( self.inFileName, 'r' ) as self.in_fp:
 			while self.charClass != self.CHAR_CLASSES[ 'EOF' ]:
 				tokens.append( self.lex() )
+		tokens.append( ( -1, "EOF" ) )
 		return tokens
 
 	def getChar( self ):
@@ -106,4 +107,4 @@ class lexical_analyser:
 			self.nextToken = self.CHAR_CLASSES[ 'EOF' ]
 			self.lexeme = "EOF"
 		#print( 'Next token is: ', self.nextToken, ', next lexeme is ', ''.join( self.lexeme ) )
-		return self.nextToken
+		return ( self.nextToken, ''.join( self.lexeme ) )
