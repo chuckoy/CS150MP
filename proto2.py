@@ -24,8 +24,9 @@ class MenuBar(Tkinter.Menu):
         if len(str(self.textPad.get(1.0, END)))>1:
             answer=tkMessageBox.askyesno('Save File!','Do you want to save file?')
             if answer == True:
-                self.saveas_command()
+                self.save_command()
         self.textPad.delete('1.0', END)
+        self.file=""
     
     def open_command(self):
         self.file = tkFileDialog.askopenfile(parent=self,mode='rb',title='Select a file')
