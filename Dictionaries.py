@@ -1,14 +1,14 @@
-class dictionaries:
+class Dictionaries:
 	def __init__( self ):
 		# reserved words
-		self.RESERVED_WORDS = {	'int' : 'type',
+		RESERVED_WORDS = {	'int' : 'type',
 							'char' : 'type',
 							'float' : 'type',
 							'bool' : 'type',
 							'if' : 'conditional' }
 
 		# token codes
-		self.TOKEN = {	'INT_LIT' : 10,
+		TOKEN = {	'INT_LIT' : 10,
 					'IDENT' : 11,
 					'ASSIGN_OP' : 20,
 					'ADD_OP' : 21,
@@ -20,7 +20,7 @@ class dictionaries:
 					'SEMICOLON' : 30 }
 
 	def getReservedWordsDict( self ):
-		return self.RESERVED_WORDS
+		return RESERVED_WORDS
 
 	def getTokenDict( self ):
-		return self.TOKEN
+		return TOKEN
