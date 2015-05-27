@@ -21,10 +21,12 @@ class MenuBar(Tkinter.Menu):
     def open_command(self):
         file = tkFileDialog.askopenfile(parent=self,mode='rb',title='Select a file')
         if file != None:
+            #print "fucker"
             contents = file.read()
             self.textPad.insert('1.0',contents)
+            #print contents
             file.close()
-        sys.exit(0)
+        
 
     def quit(self):
         sys.exit(0)
