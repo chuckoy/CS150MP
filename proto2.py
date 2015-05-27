@@ -14,7 +14,7 @@ class MenuBar(Tkinter.Menu):
         fileMenu.add_command(label="New File", underline=0, command=self.quit)        
         fileMenu.add_command(label="Open File", underline=0, command=self.open_command)
         fileMenu.add_command(label="Save", underline=0,command=self.quit)
-        fileMenu.add_command(label="Save As", underline=5,command=self.quit)          
+        fileMenu.add_command(label="Save As", underline=5,command=self.saveas_command)          
         fileMenu.add_command(label="Exit", underline=0, command=self.quit)
         self.add_command(label="Run", underline=0, command=self.quit)
 
@@ -26,8 +26,15 @@ class MenuBar(Tkinter.Menu):
             self.textPad.insert('1.0',contents)
             #print contents
             file.close()
-        
 
+    def saveas_command(self):
+        file = tkFileDialog.asksaveasfile(mode='w', defaultextension=".txt")
+        if file is None: # asksaveasfile return `None` if dialog closed with "cancel".
+            return
+        save_file = str(self.textPad.get(1.0, END)) # starts from `1.0`, not `0.0`
+        file.write(save_file)
+        file.close()
+        
     def quit(self):
         sys.exit(0)
     
