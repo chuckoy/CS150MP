@@ -11,7 +11,7 @@ class MenuBar(Tkinter.Menu):
         fileMenu.add_command(label="Save", underline=0,command=self.quit)
         fileMenu.add_command(label="Save As", underline=5,command=self.quit)          
         fileMenu.add_command(label="Exit", underline=0, command=self.quit)
-
+        self.add_command(label="Run", underline=0, command=self.quit)
     def quit(self):
         sys.exit(0)
 
