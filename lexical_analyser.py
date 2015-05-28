@@ -21,10 +21,14 @@ class lexical_analyser:
 		Returns a list of the tokens from the given inFileName in the constructor
 		"""
 		tokens = []
+		currExpr = []
 		with open( self.inFileName, 'r' ) as self.in_fp:
 			while self.charClass != self.CHAR_CLASSES[ 'EOF' ]:
-				tokens.append( self.lex() )
-		tokens.append( ( -1, "EOF" ) )
+				currExpr.append( self.lex() )
+				if self.nextToken == self.TOKEN[ 'SEMICOLON' ]:
+					tokens.append( currExpr )
+					currExpr = []
+		tokens.append( [ ( -1, "EOF" ) ] )
 		return tokens
 
 	def getChar( self ):
@@ -92,7 +96,11 @@ class lexical_analyser:
 				self.getChar()
 				if( self.charClass != self.CHAR_CLASSES[ 'LETTER' ] and self.charClass != self.CHAR_CLASSES[ 'DIGIT' ] ):
 					break
-			self.nextToken = self.TOKEN[ 'IDENT' ]
+			if ''.join( self.lexeme ) not in self.RESERVED_WORDS:
+				self.nextToken = self.TOKEN[ 'IDENT' ]
+			else:
+				value = self.RESERVED_WORDS[ ''.join( self.lexeme ) ]
+				self.nextToken = self.TOKEN[ value ]
 		elif self.charClass == self.CHAR_CLASSES[ 'DIGIT' ]:
 			while True:
 				self.addChar()
@@ -106,5 +114,4 @@ class lexical_analyser:
 		elif self.charClass == self.CHAR_CLASSES[ 'EOF' ]:
 			self.nextToken = self.CHAR_CLASSES[ 'EOF' ]
 			self.lexeme = "EOF"
-		#print( 'Next token is: ', self.nextToken, ', next lexeme is ', ''.join( self.lexeme ) )
 		return ( self.nextToken, ''.join( self.lexeme ) )

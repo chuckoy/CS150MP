@@ -1,15 +1,16 @@
 class dictionaries:
 	def __init__( self ):
 		# reserved words
-		self.RESERVED_WORDS = {	'int' : 'type',
-								'char' : 'type',
-								'float' : 'type',
-								'bool' : 'type',
-								'if' : 'conditional' }
+		self.RESERVED_WORDS = {	'int' : 'TYPE',
+								'char' : 'TYPE',
+								'float' : 'TYPE',
+								'bool' : 'TYPE',
+								'if' : 'CONDITIONAL' }
 
 		# token codes
 		self.TOKEN = {	'INT_LIT' : 10,
 						'IDENT' : 11,
+						'TYPE' : 12,
 						'ASSIGN_OP' : 20,
 						'ADD_OP' : 21,
 						'SUB_OP' : 22,

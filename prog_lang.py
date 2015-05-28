@@ -19,7 +19,8 @@ class ProgLang:
 	def runProgram( self ):
 		# insert logic for running program here
 		self.tokens = self.lexical.run()
-		print self.tokens
-		self.parser.run( self.tokens )
+		for expr in self.tokens:
+			print expr
+		#self.parser.run( self.tokens )
 
 progLang = ProgLang( sys.argv[ 1 ] )
