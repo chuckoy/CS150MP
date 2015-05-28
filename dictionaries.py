@@ -5,12 +5,14 @@ class dictionaries:
 								'char' : 'TYPE',
 								'float' : 'TYPE',
 								'bool' : 'TYPE',
-								'if' : 'CONDITIONAL' }
+								'if' : 'CONDITIONAL',
+								'break' : 'BREAK' }
 
 		# token codes
 		self.TOKEN = {	'INT_LIT' : 10,
 						'IDENT' : 11,
 						'TYPE' : 12,
+						'FLOAT_LIT' : 13,
 						'ASSIGN_OP' : 20,
 						'ADD_OP' : 21,
 						'SUB_OP' : 22,
@@ -20,7 +22,11 @@ class dictionaries:
 						'RIGHT_PAREN' : 26,
 						'UNARY_ADD_OP' : 27,
 						'UNARY_SUB_OP' : 28,
-						'SEMICOLON' : 30 }
+						'SEMICOLON' : 30,
+						'LEFT_CURLY' : 31,
+						'RIGHT_CURLY' : 32,
+						'DOT' : 80,
+						'BACKSLASH' : 81 }
 
 	def getReservedWordsDict( self ):
 		return self.RESERVED_WORDS
