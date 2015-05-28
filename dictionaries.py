@@ -6,6 +6,16 @@ class dictionaries:
 								'float' : 'TYPE',
 								'bool' : 'TYPE',
 								'if' : 'CONDITIONAL',
+								'else' : 'CONDITIONAL',
+								'foreach' : 'LOOP',
+								'for' : 'LOOP',
+								'in': 'IN',
+								'return': 'RETURN',
+								'or': 'LOGIC',
+								'and': 'LOGIC',
+								'not': 'LOGIC',
+								'true': 'TRUTH',
+								'false': 'TRUTH',
 								'break' : 'BREAK' }
 
 		# token codes
@@ -13,6 +23,7 @@ class dictionaries:
 						'IDENT' : 11,
 						'TYPE' : 12,
 						'FLOAT_LIT' : 13,
+						'CHAR_LIT' : 14,
 						'ASSIGN_OP' : 20,
 						'ADD_OP' : 21,
 						'SUB_OP' : 22,
