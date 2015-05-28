@@ -22,6 +22,9 @@ class dictionaries:
 						'UNARY_SUB_OP' : 28,
 						'SEMICOLON' : 30 }
 
+		#data types
+		self.DTYPES = ['int','char','float','bool']
+
 	def getReservedWordsDict( self ):
 		return self.RESERVED_WORDS
 
