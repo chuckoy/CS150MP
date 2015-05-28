@@ -12,6 +12,8 @@ class lexical_analyser:
 		self.CHAR_CLASSES = {	'EOF' : -1,	
 								'LETTER' : 0,
 								'DIGIT' : 1,
+								'ADD' : 2,
+								'SUB' : 3,
 								'UNKNOWN' : 99 }
 		self.RESERVED_WORDS = dicts.getReservedWordsDict()
 		self.TOKEN = dicts.getTokenDict()
@@ -28,7 +30,7 @@ class lexical_analyser:
 				if self.nextToken == self.TOKEN[ 'SEMICOLON' ]:
 					tokens.append( currExpr )
 					currExpr = []
-		tokens.append( [ ( -1, "EOF" ) ] )
+		#tokens.append( [ ( -1, "EOF" ) ] )
 		return tokens
 
 	def getChar( self ):
@@ -41,6 +43,10 @@ class lexical_analyser:
 				self.charClass = self.CHAR_CLASSES[ 'LETTER' ]
 			elif self.nextChar.isdigit():
 				self.charClass = self.CHAR_CLASSES[ 'DIGIT' ]
+			elif self.nextChar == '+':
+				self.charClass = self.CHAR_CLASSES[ 'ADD' ]
+			elif self.nextChar == '-':
+				self.charClass = self.CHAR_CLASSES[ 'SUB' ]
 			else:
 				self.charClass = self.CHAR_CLASSES[ 'UNKNOWN' ]
 		else:
@@ -58,13 +64,9 @@ class lexical_analyser:
 		"""
 		self.addChar()
 		if ch == '(':
-			self.self.nextToken = self.TOKEN[ 'LEFT_PAREN' ]
+			self.nextToken = self.TOKEN[ 'LEFT_PAREN' ]
 		elif ch == ')':
 			self.nextToken = self.TOKEN[ 'RIGHT_PAREN' ]
-		elif ch == '+':
-			self.nextToken = self.TOKEN[ 'ADD_OP' ]
-		elif ch == '-':
-			self.nextToken = self.TOKEN[ 'SUB_OP' ]
 		elif ch == '*':
 			self.nextToken = self.TOKEN[ 'MULT_OP' ]
 		elif ch == '/':
@@ -75,6 +77,7 @@ class lexical_analyser:
 			self.nextToken = self.TOKEN[ 'SEMICOLON' ]
 		else:
 			self.nextToken = self.CHAR_CLASSES[ 'EOF' ]
+		self.getChar()
 		return self.nextToken
 
 	def getNonBlank( self ):
@@ -90,6 +93,7 @@ class lexical_analyser:
 		"""
 		self.lexeme = []
 		self.getNonBlank()
+		# case ident
 		if self.charClass == self.CHAR_CLASSES[ 'LETTER' ]:
 			while True:
 				self.addChar()
@@ -98,9 +102,12 @@ class lexical_analyser:
 					break
 			if ''.join( self.lexeme ) not in self.RESERVED_WORDS:
 				self.nextToken = self.TOKEN[ 'IDENT' ]
+				self.lexeme = "ID"
 			else:
+				# find the "token value" corresponding to the reserved word found
 				value = self.RESERVED_WORDS[ ''.join( self.lexeme ) ]
 				self.nextToken = self.TOKEN[ value ]
+		# case numConst
 		elif self.charClass == self.CHAR_CLASSES[ 'DIGIT' ]:
 			while True:
 				self.addChar()
@@ -108,9 +115,25 @@ class lexical_analyser:
 				if( self.charClass != self.CHAR_CLASSES[ 'DIGIT' ] ):
 					break
 			self.nextToken = self.TOKEN[ 'INT_LIT' ]
+			self.lexeme = "NUMCONST"
+		# cases + or -, check if unary operator or just operator
+		elif self.charClass == self.CHAR_CLASSES[ 'ADD' ]:
+			self.addChar()
+			self.getChar()
+			if( self.charClass != self.CHAR_CLASSES[ 'ADD' ] ):
+				self.nextToken = self.TOKEN[ 'ADD_OP' ]
+			else:
+				self.nextToken = self.TOKEN[ 'UNARY_ADD_OP' ]
+		elif self.charClass == self.CHAR_CLASSES[ 'SUB' ]:
+			self.addChar()
+			self.getChar()
+			if( self.charClass != self.CHAR_CLASSES[ 'SUB' ] ):
+				self.nextToken = self.TOKEN[ 'SUB_OP' ]
+			else:
+				self.nextToken = self.TOKEN[ 'UNARY_SUB_OP' ]
+		# case unknown, go to lookup
 		elif self.charClass == self.CHAR_CLASSES[ 'UNKNOWN' ]:
 			self.lookup( self.nextChar )
-			self.getChar()
 		elif self.charClass == self.CHAR_CLASSES[ 'EOF' ]:
 			self.nextToken = self.CHAR_CLASSES[ 'EOF' ]
 			self.lexeme = "EOF"

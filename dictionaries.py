@@ -18,6 +18,8 @@ class dictionaries:
 						'DIV_OP' : 24,
 						'LEFT_PAREN' : 25,
 						'RIGHT_PAREN' : 26,
+						'UNARY_ADD_OP' : 27,
+						'UNARY_SUB_OP' : 28,
 						'SEMICOLON' : 30 }
 
 	def getReservedWordsDict( self ):

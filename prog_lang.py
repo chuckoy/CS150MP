@@ -4,6 +4,7 @@ import io
 from dictionaries import dictionaries
 from lexical_analyser import lexical_analyser
 from recursive_descent import recursive_descent
+from slr_parser import slr_parser
 
 class ProgLang:
 	def __init__( self, inFileName, outFileName = "a.out" ):
@@ -12,7 +13,7 @@ class ProgLang:
 		# semantic: semantics analyser: feed syntactical structure and apply meaning and execute
 		self.dicts = dictionaries()
 		self.lexical = lexical_analyser( inFileName, self.dicts )
-		self.parser = recursive_descent( self.dicts )
+		self.parser = slr_parser( self.dicts )
 		#self.semantic = SemanticsAnalyser()
 		self.runProgram()
 
@@ -21,6 +22,6 @@ class ProgLang:
 		self.tokens = self.lexical.run()
 		for expr in self.tokens:
 			print expr
-		#self.parser.run( self.tokens )
+		self.parser.run( self.tokens )
 
 progLang = ProgLang( sys.argv[ 1 ] )
