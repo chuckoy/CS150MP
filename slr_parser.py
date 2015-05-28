@@ -4,34 +4,48 @@ import sys
 
 class slr_parser:
 	def __init__( self, dicts ):
+		"""	Constructor
+		:param dicts: utility file for dictionaries
+		"""
+		# initialise needed variables
 		self.RESERVED_WORDS = dicts.getReservedWordsDict()
 		self.TOKEN = dicts.getTokenDict()
 		self.stack = [ 0 ]
 		self.input = []
 		self.LRTable = []
+
+		# generate grammar for rule reduction
 		self.gr = self.grammar()
+
+		# read the csv file containing the parse table and create
 		with open( 'lrTable.csv', 'rb' ) as csvFile:
 			reader = csv.DictReader( csvFile, delimiter = ',' )
 			for row in reader:
 				self.LRTable.append( row )
-		
-		for row in self.LRTable:
-			print row
-		print self.LRTable[ 0 ][ 'int' ]
+		# the lrtable is a list of dictionaries
+		# the ith index represents the ith state of the automata
 
 	def run( self, tokens ):
+		"""
+		Returns a list of lists of lists.
+		One outermost list containing all expressions.
+		Each middle list is one expression.
+		The innermost list is the pair ( unprocessed_input, token )
+		"""
+		# split the tokens
 		self.tokens = tokens
 		keys = self.TOKEN.keys()
 		values = self.TOKEN.values()
+
+		# fill the input with the processed feed
 		for expr in tokens:
-			for code, raw in expr:
+			for code, proc, raw in expr:
 				tokenTry = values.index( code )
-				#print keys[ tokenTry ]
-				#self.input.append( keys[ tokenTry ] )
-				self.input.append( raw )
+				self.input.append( proc )
+		# append $ to notify end of feed
 		self.input.append( '$' )
-		print "INPUT IS: ", self.input
-		print self.printList( self.input )
+
+		# while action is not accept, keep resolving
 		action = ""
 		while action != "acc":
 			try:
@@ -41,43 +55,72 @@ class slr_parser:
 				print "Input: ", self.printList( self.input )
 				print "Action: ", action
 
+				# perform a shift action
 				if action[ 0 ] == 's':
 					self.stack.append( self.input.pop( 0 ) )
 					self.stack.append( int( action[ 1: ] ) )
+
+				# perform a reduction
 				elif action[ 0 ] == 'r':
 					left, right = self.gr[ int( action[ 1: ] ) ].split( '->' )
 					left = string.replace( left, " ", "" )
 					rightList = right.split()
 
+					# get the rule and reverse to check
 					rightList.reverse()
-					print "Rule: ", rightList
 					for token in rightList:
-						print "Stack: ", self.stack
+						# pop the state number at the top of the stack
 						self.stack.pop()
+						# if the token received is not the expected token
 						if self.stack[ -1 ] != token:
 							print "Error at parsing: ", token, " expected. ", self.stack[ -1 ], " gotten."
 							self.error()
 						else:
+							# pop the token for reduction purposes
 							self.stack.pop()
+					# find the proper GOTO and append the correct state number
 					latestState = int( self.stack[ -1 ] )
 					stateToAppend = self.LRTable[ latestState ][ left ]
 					self.stack.append( left )
 					self.stack.append( stateToAppend )
+
+				# finished parsing; process output properly
 				elif action == 'acc':
 					print "Done"
+					response = []
+					for expr in tokens:
+						subResponse = []
+						for code, proc, raw in expr:
+							tokenTry = values.index( code )
+							subResponse.append( [ raw, keys[ tokenTry ] ] )
+						response.append( subResponse )
 					break
 
+			# key error in parse table or grammar
 			except KeyError, e:
 				self.error()
-				sys.exit( "Leaving program." )
 				break
+		return response
 
 	def error( self ):
-		print "fuck error"
+		"""
+		Error handling function
+		"""
+		print "error"
+		sys.exit( "Leaving program." )
 
 	def grammar( self ):
+		"""
+		Returns dictionary as: (ruleNumber, rule) pair
+		"""
 		gr = dict()
-
+		i = 0
+		with open( "grammar.txt", 'r' ) as grammarFile:
+			for rule in grammarFile:
+				gr[ i ] = rule.rstrip()
+				i += 1
+		return gr
+		"""
 		gr[ 0 ] = "program -> declaration-list"
 		gr[ 1 ] = "declaration-list -> declaration-list declaration"
 		gr[ 2 ] = "declaration-list -> declaration"
@@ -116,10 +159,12 @@ class slr_parser:
 		gr[ 35 ] = "mutable -> ID"
 		gr[ 36 ] = "immutable -> constant"
 		gr[ 37 ] = "constant -> NUMCONS"
-
-		return gr
+		"""
 
 	def printList( self, arr ):
+		"""
+		Function for printing from stack and input lists
+		"""
 		get = ""
 		for ele in arr:
 			get = get + str( ele ) + " "

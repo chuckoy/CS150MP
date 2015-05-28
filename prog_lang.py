@@ -3,7 +3,6 @@ import re
 import io
 from dictionaries import dictionaries
 from lexical_analyser import lexical_analyser
-from recursive_descent import recursive_descent
 from slr_parser import slr_parser
 
 class ProgLang:
@@ -20,8 +19,6 @@ class ProgLang:
 	def runProgram( self ):
 		# insert logic for running program here
 		self.tokens = self.lexical.run()
-		for expr in self.tokens:
-			print expr
-		self.parser.run( self.tokens )
+		self.parsed = self.parser.run( self.tokens )
 
 progLang = ProgLang( sys.argv[ 1 ] )

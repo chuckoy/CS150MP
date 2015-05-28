@@ -57,6 +57,7 @@ class lexical_analyser:
 		Append the character to the current lexeme (for tracking)
 		"""
 		self.lexeme.append( self.nextChar )
+		self.lexeme2.append( self.nextChar )
 
 	def lookup( self, ch ):
 		""" Looks up unknown chars (not digit nor letter). Returns token type
@@ -92,6 +93,7 @@ class lexical_analyser:
 		Main lexical function, returns nextToken
 		"""
 		self.lexeme = []
+		self.lexeme2 = []
 		self.getNonBlank()
 		# case ident
 		if self.charClass == self.CHAR_CLASSES[ 'LETTER' ]:
@@ -137,4 +139,4 @@ class lexical_analyser:
 		elif self.charClass == self.CHAR_CLASSES[ 'EOF' ]:
 			self.nextToken = self.CHAR_CLASSES[ 'EOF' ]
 			self.lexeme = "EOF"
-		return ( self.nextToken, ''.join( self.lexeme ) )
+		return ( self.nextToken, ''.join( self.lexeme ), ''.join( self.lexeme2 ) )

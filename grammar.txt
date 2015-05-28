@@ -1,0 +1,38 @@
+program -> declaration-list
+declaration-list -> declaration-list declaration 
+declaration-list -> declaration
+declaration -> var-declaration 
+var-declaration -> type-specifier var-decl-list ;
+scoped-var-declarations -> scoped-type-specifier var-decl-list ;
+scoped-type-specifier -> static type-specifier 
+scoped-type-specifier -> type-specifier 
+type-specifier -> int 
+type-specifier -> bool 
+type-specifier -> char
+var-decl-list -> var-decl-list , var-decl-initialize 
+var-decl-list -> var-decl-initialize
+var-decl-initialize -> var-decl-id 
+var-decl-initialize -> var-decl-id = simple-expression
+var-decl-id -> ID 
+simple-expression -> and-expression
+and-expression -> unary-rel-expression
+unary-rel-expression -> rel-expression 
+rel-expression -> sum-expression
+sum-expression -> sum-expression sumop term
+sum-expression ->  term 
+sumop -> +
+sumop ->  -
+term -> term mulop unary-expression
+term -> unary-expression 
+mulop -> *
+mulop -> / 
+mulop -> % 
+unary-expression -> unaryop unary-expression 
+unary-expression -> factor 
+factor -> immutable 
+factor -> mutable 
+unaryop -> -
+unaryop -> * 
+mutable -> ID 
+immutable -> constant 
+constant -> NUMCONST
