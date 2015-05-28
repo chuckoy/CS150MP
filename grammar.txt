@@ -2,37 +2,106 @@ program -> declaration-list
 declaration-list -> declaration-list declaration 
 declaration-list -> declaration
 declaration -> var-declaration 
+declaration -> fun-declaration
 var-declaration -> type-specifier var-decl-list ;
 scoped-var-declarations -> scoped-type-specifier var-decl-list ;
-scoped-type-specifier -> static type-specifier 
+var-decl-list -> var-decl-list , var-decl-initialize 
+var-decl-list -> var-decl-initialize
+var-decl-initialize -> var-decl-id 
+var-decl-initialize -> var-decl-id = simple-expression 
+var-decl-initialize -> var-decl-id = [ simple-expression-list ]
+simple-expression-list -> simple-expression-list , simple-expression
+simple-expression-list -> simple-expression
+var-decl-id -> ID 
+var-decl-id -> ID [ NUMCONST ] 
 scoped-type-specifier -> type-specifier 
 type-specifier -> int 
 type-specifier -> bool 
 type-specifier -> char
-var-decl-list -> var-decl-list , var-decl-initialize 
-var-decl-list -> var-decl-initialize
-var-decl-initialize -> var-decl-id 
-var-decl-initialize -> var-decl-id = simple-expression
-var-decl-id -> ID 
+type-specifier -> float
+fun-declaration -> type-specifier ID ( params ) statement 
+fun-declaration -> ID ( params ) statement
+params -> param-list 
+params -> ''
+param-list -> param-list ; param-type-list 
+param-list -> param-type-list 
+param-type-list -> type-specifier param-id-list 
+param-id-list -> param-id-list , param-id 
+param-id-list -> param-id 
+param-id -> ID 
+param-id -> ID [ ] 
+statement -> expression-stmt
+statement -> compound-stmt
+statement -> selection-stmt
+statement -> iteration-stmt
+statement -> return-stmt
+statement -> break-stmt 
+compound-stmt -> { local-declarations statement-list } 
+local-declarations -> local-declarations scoped-var-declaration
+local-declarations -> ''
+statement-list -> statement-list statement
+statement-list -> ''
+expression-stmt -> expression ; 
+expression-stmt -> ; 
+selection-stmt -> if ( simple-expression ) statement 
+selection-stmt -> if ( simple-expression ) statement else statement 
+iteration-stmt -> while ( simple-expression ) statement 
+iteration-stmt -> foreach ( mutable in simple-expression ) statement 
+iteration-stmt -> for ( expression ; simple-expression ) statement
+iteration-stmt -> for ( expression ; simple-expression ; expression ) statement
+return-stmt -> return ; 
+return-stmt -> return expression ; 
+break-stmt -> break ; 
+expression -> mutable = expression 
+expression -> mutable += expression
+expression -> mutable −= expression
+expression -> mutable ++ 
+expression -> mutable −− 
+expression -> simple-expression 
+simple-expression -> simple-expression or and-expression 
 simple-expression -> and-expression
+and-expression -> and-expression and unary-rel-expression 
 and-expression -> unary-rel-expression
+unary-rel-expression -> not unary-rel-expression 
 unary-rel-expression -> rel-expression 
+rel-expression -> sum-expression relop sum-expression 
 rel-expression -> sum-expression
-sum-expression -> sum-expression sumop term
-sum-expression ->  term 
+relop -> <=
+relop -> < 
+relop -> > 
+relop -> >= 
+relop -> == 
+relop -> != 
+sum-expression -> sum-expression sumop term 
+sum-expression -> term 
 sumop -> +
-sumop ->  -
-term -> term mulop unary-expression
+sumop -> -
+term -> term mulop unary-expression 
 term -> unary-expression 
 mulop -> *
 mulop -> / 
 mulop -> % 
 unary-expression -> unaryop unary-expression 
 unary-expression -> factor 
+unaryop -> - 
+unaryop -> *
 factor -> immutable 
 factor -> mutable 
-unaryop -> -
-unaryop -> * 
 mutable -> ID 
+mutable -> ID [ expression ] 
+immutable -> ( expression ) 
+immutable -> call 
 immutable -> constant 
-constant -> NUMCONST
+call -> ID ( args ) 
+args -> arg-list 
+args -> ''
+arg-list -> arg-list , expression 
+arg-list -> expression 
+constant -> const
+const -> ID [ NUMCONST ] 
+const -> NUMCONST
+const -> FLOATCONST
+const -> CHARCONST 
+const -> bool_value	
+bool_value -> true
+bool_value -> false

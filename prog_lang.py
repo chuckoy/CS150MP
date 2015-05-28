@@ -20,5 +20,7 @@ class ProgLang:
 		# insert logic for running program here
 		self.tokens = self.lexical.run()
 		self.parsed = self.parser.run( self.tokens )
+		for row in self.parsed:
+			print row
 
 progLang = ProgLang( sys.argv[ 1 ] )

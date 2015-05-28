@@ -14,6 +14,8 @@ class lexical_analyser:
 								'DIGIT' : 1,
 								'ADD' : 2,
 								'SUB' : 3,
+								'DOT' : 80,
+								'SINGLE_QUOTE' : 81,
 								'UNKNOWN' : 99 }
 		self.RESERVED_WORDS = dicts.getReservedWordsDict()
 		self.TOKEN = dicts.getTokenDict()
@@ -33,6 +35,18 @@ class lexical_analyser:
 		#tokens.append( [ ( -1, "EOF" ) ] )
 		return tokens
 
+	def error( self, receivedNum, expectedNum ):
+		"""	Error handling function
+		:param receivedNum: The received charClass
+		:param expectedNum: Expected charClass
+		"""
+		chKeys = self.CHAR_CLASSES.keys()
+		chValues = self.CHAR_CLASSES.values()
+		charClassExp = chValues.index( expectedNum )
+		charClassRec = chValues.index( receivedNum )
+		print "Error tokenising: ", chKeys[ charClassExp ], " expected. ", chKeys[ charClassRec ], " received."
+		sys.exit( "Leaving program" )
+
 	def getChar( self ):
 		"""
 		Get a character and assign the proper charClass
@@ -47,6 +61,10 @@ class lexical_analyser:
 				self.charClass = self.CHAR_CLASSES[ 'ADD' ]
 			elif self.nextChar == '-':
 				self.charClass = self.CHAR_CLASSES[ 'SUB' ]
+			elif self.nextChar == '.':
+				self.charClass = self.CHAR_CLASSES[ 'DOT' ]
+			elif self.nextChar == '\'':
+				self.charClass = self.CHAR_CLASSES[ 'SINGLE_QUOTE' ]
 			else:
 				self.charClass = self.CHAR_CLASSES[ 'UNKNOWN' ]
 		else:
@@ -76,6 +94,14 @@ class lexical_analyser:
 			self.nextToken = self.TOKEN[ 'ASSIGN_OP' ]
 		elif ch == ';':
 			self.nextToken = self.TOKEN[ 'SEMICOLON' ]
+		elif ch == '{':
+			self.nextToken = self.TOKEN[ 'LEFT_CURLY' ]
+		elif ch == '}':
+			self.nextToken = self.TOKEN[ 'RIGHT_CURLY' ]
+		elif ch == '.':
+			self.nextToken = self.TOKEN[ 'DOT' ]
+		elif ch == '\\':
+			self.nextToken = self.TOKEN[ 'BACKSLASH' ]
 		else:
 			self.nextToken = self.CHAR_CLASSES[ 'EOF' ]
 		self.getChar()
@@ -95,7 +121,7 @@ class lexical_analyser:
 		self.lexeme = []
 		self.lexeme2 = []
 		self.getNonBlank()
-		# case ident
+		# case IDENT/RESERVED_WORD
 		if self.charClass == self.CHAR_CLASSES[ 'LETTER' ]:
 			while True:
 				self.addChar()
@@ -109,15 +135,27 @@ class lexical_analyser:
 				# find the "token value" corresponding to the reserved word found
 				value = self.RESERVED_WORDS[ ''.join( self.lexeme ) ]
 				self.nextToken = self.TOKEN[ value ]
-		# case numConst
+		# case FLOATCONST/INTCONST
 		elif self.charClass == self.CHAR_CLASSES[ 'DIGIT' ]:
+			dotFlag = 0
 			while True:
 				self.addChar()
 				self.getChar()
 				if( self.charClass != self.CHAR_CLASSES[ 'DIGIT' ] ):
-					break
-			self.nextToken = self.TOKEN[ 'INT_LIT' ]
-			self.lexeme = "NUMCONST"
+					if dotFlag == 1:
+						break
+					elif self.charClass == self.CHAR_CLASSES[ 'DOT' ]:
+						self.addChar()
+						self.getChar()
+						dotFlag = 1
+					else:
+						self.error( self.charClass, self.CHAR_CLASSES[ 'DOT' ] )
+			if dotFlag == 1:
+				self.nextToken = self.TOKEN[ 'FLOAT_LIT' ]
+				self.lexeme = "FLOATCONST"
+			else:
+				self.nextToken = self.TOKEN[ 'INT_LIT' ]
+				self.lexeme = "NUMCONST"
 		# cases + or -, check if unary operator or just operator
 		elif self.charClass == self.CHAR_CLASSES[ 'ADD' ]:
 			self.addChar()
@@ -133,6 +171,20 @@ class lexical_analyser:
 				self.nextToken = self.TOKEN[ 'SUB_OP' ]
 			else:
 				self.nextToken = self.TOKEN[ 'UNARY_SUB_OP' ]
+		# case CHARCONST
+		elif self.charClass == self.CHAR_CLASSES[ 'SINGLE_QUOTE' ]:
+			self.addChar()
+			self.getChar()
+			if self.charClass == self.CHAR_CLASSES[ 'LETTER' ]:
+				self.addChar()
+				self.getChar()
+				if self.charClass == self.CHAR_CLASSES[ 'SINGLE_QUOTE' ]:
+					self.nextToken = self.TOKEN[ 'CHAR_LIT' ]
+					self.lexeme = "CHARCONST"
+				else:
+					self.error( self.charClass, self.CHAR_CLASSES[ 'SINGLE_QUOTE' ] )
+			else:
+				self.error( self.charClass, self.CHAR_CLASSES[ 'LETTER' ] )
 		# case unknown, go to lookup
 		elif self.charClass == self.CHAR_CLASSES[ 'UNKNOWN' ]:
 			self.lookup( self.nextChar )
