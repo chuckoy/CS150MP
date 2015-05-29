@@ -1,11 +1,11 @@
-program -> declaration-list
+program -> declaration-list 
 declaration-list -> declaration-list declaration 
 declaration-list -> declaration
 declaration -> var-declaration 
 declaration -> fun-declaration
 var-declaration -> type-specifier var-decl-list ;
-scoped-var-declarations -> scoped-type-specifier var-decl-list ;
-var-decl-list -> var-decl-list , var-decl-initialize 
+scoped-var-declaration -> scoped-type-specifier var-decl-list ;
+var-decl-list -> var-decl-list , var-decl-initialize  
 var-decl-list -> var-decl-initialize
 var-decl-initialize -> var-decl-id 
 var-decl-initialize -> var-decl-id = simple-expression 
@@ -21,6 +21,7 @@ type-specifier -> char
 type-specifier -> float
 fun-declaration -> type-specifier ID ( params ) statement 
 fun-declaration -> ID ( params ) statement
+fun-declaration -> main ( params ) statement
 params -> param-list 
 params -> ''
 param-list -> param-list ; param-type-list 
@@ -36,6 +37,22 @@ statement -> selection-stmt
 statement -> iteration-stmt
 statement -> return-stmt
 statement -> break-stmt 
+statement -> print-stmt
+statement -> scan-stmt
+print-stmt -> printf
+scan-stmt -> scanf
+printf -> print " message "  ;  
+printf -> print " message " , var-decl-list ;
+message -> message CHARCONST
+message -> message var-in-message
+message -> ''
+var-in-message -> %d
+var-in-message -> %f
+var-in-message -> %c
+scanf -> scan " var-in-scan " , var-decl-id ;
+var-in-scan -> %d
+var-in-scan -> %f
+var-in-scan -> %c
 compound-stmt -> { local-declarations statement-list } 
 local-declarations -> local-declarations scoped-var-declaration
 local-declarations -> ''
@@ -43,8 +60,8 @@ statement-list -> statement-list statement
 statement-list -> ''
 expression-stmt -> expression ; 
 expression-stmt -> ; 
-selection-stmt -> if ( simple-expression ) statement 
-selection-stmt -> if ( simple-expression ) statement else statement 
+selection-stmt -> if ( simple-expression ) statement selection-stmt1
+selection-stmt1 -> else statement 
 iteration-stmt -> while ( simple-expression ) statement 
 iteration-stmt -> foreach ( mutable in simple-expression ) statement 
 iteration-stmt -> for ( expression ; simple-expression ) statement
@@ -84,9 +101,9 @@ mulop -> %
 unary-expression -> unaryop unary-expression 
 unary-expression -> factor 
 unaryop -> - 
-unaryop -> *
 factor -> immutable 
 factor -> mutable 
+mutable -> ( type-specifier ) ID 
 mutable -> ID 
 mutable -> ID [ expression ] 
 immutable -> ( expression ) 
@@ -98,7 +115,6 @@ args -> ''
 arg-list -> arg-list , expression 
 arg-list -> expression 
 constant -> const
-const -> ID [ NUMCONST ] 
 const -> NUMCONST
 const -> FLOATCONST
 const -> CHARCONST 

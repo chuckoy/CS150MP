@@ -1,3 +1,5 @@
+import sys
+
 class lexical_analyser:
 	def __init__( self, inFileName, dicts ):
 		"""	Constructor
@@ -14,6 +16,10 @@ class lexical_analyser:
 								'DIGIT' : 1,
 								'ADD' : 2,
 								'SUB' : 3,
+								'EQUAL' : 4,
+								'LESS' : 5,
+								'GREATER' : 6,
+								'EXCL' : 7,
 								'DOT' : 80,
 								'SINGLE_QUOTE' : 81,
 								'UNKNOWN' : 99 }
@@ -65,6 +71,14 @@ class lexical_analyser:
 				self.charClass = self.CHAR_CLASSES[ 'DOT' ]
 			elif self.nextChar == '\'':
 				self.charClass = self.CHAR_CLASSES[ 'SINGLE_QUOTE' ]
+			elif self.nextChar == '=':
+				self.charClass = self.CHAR_CLASSES[ 'EQUAL' ]
+			elif self.nextChar == '<':
+				self.charClass = self.CHAR_CLASSES[ 'LESS' ]
+			elif self.nextChar == '>':
+				self.charClass = self.CHAR_CLASSES[ 'GREATER' ]
+			elif self.nextChar == '!':
+				self.charClass = self.CHAR_CLASSES[ 'EXCL' ]
 			else:
 				self.charClass = self.CHAR_CLASSES[ 'UNKNOWN' ]
 		else:
@@ -90,8 +104,6 @@ class lexical_analyser:
 			self.nextToken = self.TOKEN[ 'MULT_OP' ]
 		elif ch == '/':
 			self.nextToken = self.TOKEN[ 'DIV_OP' ]
-		elif ch == '=':
-			self.nextToken = self.TOKEN[ 'ASSIGN_OP' ]
 		elif ch == ';':
 			self.nextToken = self.TOKEN[ 'SEMICOLON' ]
 		elif ch == '{':
@@ -142,17 +154,18 @@ class lexical_analyser:
 				self.addChar()
 				self.getChar()
 				if( self.charClass != self.CHAR_CLASSES[ 'DIGIT' ] ):
-					if dotFlag == 1:
-						break
-					elif self.charClass == self.CHAR_CLASSES[ 'DOT' ]:
-						self.addChar()
-						self.getChar()
-						dotFlag = 1
+					if self.charClass == self.CHAR_CLASSES[ 'DOT' ]:
+						if dotFlag == 0:
+							dotFlag = 1
+						else:
+							self.error( self.charClass, self.CHAR_CLASSES[ 'DOT' ] )
 					else:
-						self.error( self.charClass, self.CHAR_CLASSES[ 'DOT' ] )
+						break
+			# case float
 			if dotFlag == 1:
 				self.nextToken = self.TOKEN[ 'FLOAT_LIT' ]
 				self.lexeme = "FLOATCONST"
+			# case int
 			else:
 				self.nextToken = self.TOKEN[ 'INT_LIT' ]
 				self.lexeme = "NUMCONST"
@@ -160,17 +173,34 @@ class lexical_analyser:
 		elif self.charClass == self.CHAR_CLASSES[ 'ADD' ]:
 			self.addChar()
 			self.getChar()
-			if( self.charClass != self.CHAR_CLASSES[ 'ADD' ] ):
-				self.nextToken = self.TOKEN[ 'ADD_OP' ]
-			else:
+			# case addition operator
+			if( self.charClass == self.CHAR_CLASSES[ 'ADD' ] ):
+				self.addChar()
+				self.getChar()
 				self.nextToken = self.TOKEN[ 'UNARY_ADD_OP' ]
+			# case addition assignment
+			elif( self.charClass == self.CHAR_CLASSES[ 'EQUAL' ] ):
+				self.addChar()
+				self.getChar()
+				self.nextToken = self.TOKEN[ 'ADD_ASSIGN_OP' ]
+			else:
+				self.nextToken = self.TOKEN[ 'ADD_OP' ]
 		elif self.charClass == self.CHAR_CLASSES[ 'SUB' ]:
 			self.addChar()
 			self.getChar()
-			if( self.charClass != self.CHAR_CLASSES[ 'SUB' ] ):
-				self.nextToken = self.TOKEN[ 'SUB_OP' ]
-			else:
+			# case subtraction operator
+			if( self.charClass == self.CHAR_CLASSES[ 'SUB' ] ):
+				self.addChar()
+				self.getChar()
+				self.lexeme = "-"
 				self.nextToken = self.TOKEN[ 'UNARY_SUB_OP' ]
+			# case subtraction assignment
+			elif( self.charClass == self.CHAR_CLASSES[ 'EQUAL' ] ):
+				self.addChar()
+				self.getChar()
+				self.nextToken = self.TOKEN[ 'SUB_ASSIGN_OP' ]
+			else:
+				self.nextToken = self.TOKEN[ 'SUB_OP' ]
 		# case CHARCONST
 		elif self.charClass == self.CHAR_CLASSES[ 'SINGLE_QUOTE' ]:
 			self.addChar()
@@ -179,12 +209,57 @@ class lexical_analyser:
 				self.addChar()
 				self.getChar()
 				if self.charClass == self.CHAR_CLASSES[ 'SINGLE_QUOTE' ]:
+					self.addChar()
+					self.getChar()
 					self.nextToken = self.TOKEN[ 'CHAR_LIT' ]
 					self.lexeme = "CHARCONST"
 				else:
 					self.error( self.charClass, self.CHAR_CLASSES[ 'SINGLE_QUOTE' ] )
 			else:
 				self.error( self.charClass, self.CHAR_CLASSES[ 'LETTER' ] )
+		# case =, assign or equality check?
+		elif self.charClass == self.CHAR_CLASSES[ 'EQUAL' ]:
+			self.addChar()
+			self.getChar()
+			# case equality
+			if self.charClass == self.CHAR_CLASSES[ 'EQUAL' ]:
+				self.addChar()
+				self.getChar()
+				self.nextToken = self.TOKEN[ 'EQUAL_REL_OP' ]
+			# case assign
+			else:
+				self.nextToken = self.TOKEN[ 'ASSIGN_OP' ]
+		# case !, check if inequality
+		elif self.charClass == self.CHAR_CLASSES[ 'EXCL' ]:
+			self.addChar()
+			self.getChar()
+			# case inequality
+			if self.charClass == self.CHAR_CLASSES[ 'EQUAL' ]:
+				self.addChar()
+				self.getChar()
+				self.nextToken = self.TOKEN[ 'NOT_EQUAL_REL_OP' ]
+			else:
+				self.error( self.charClass, self.CHAR_CLASSES[ 'EQUAL' ] )
+		# case >, check if or equal
+		elif self.charClass == self.CHAR_CLASSES[ 'LESS' ]:
+			self.addChar()
+			self.getChar()
+			if self.charClass == self.CHAR_CLASSES[ 'EQUAL' ]:
+				self.addChar()
+				self.getChar()
+				self.nextToken = self.TOKEN[ 'LESS_EQUAL_REL_OP' ]
+			else:
+				self.nextToken = self.TOKEN[ 'LESS_REL_OP' ]
+		# case <, check if or equal
+		elif self.charClass == self.CHAR_CLASSES[ 'GREATER' ]:
+			self.addChar()
+			self.getChar()
+			if self.charClass == self.CHAR_CLASSES[ 'EQUAL' ]:
+				self.addChar()
+				self.getChar()
+				self.nextToken = self.TOKEN[ 'GREATER_EQUAL_REL_OP' ]
+			else:
+				self.nextToken = self.TOKEN[ 'GREATER_REL_OP' ]
 		# case unknown, go to lookup
 		elif self.charClass == self.CHAR_CLASSES[ 'UNKNOWN' ]:
 			self.lookup( self.nextChar )

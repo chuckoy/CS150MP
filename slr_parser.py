@@ -39,7 +39,11 @@ class slr_parser:
 
 		# fill the input with the processed feed
 		for expr in tokens:
+			print expr
 			for code, proc, raw in expr:
+				#print code
+				#print values
+				#print keys
 				tokenTry = values.index( code )
 				self.input.append( proc )
 		# append $ to notify end of feed
@@ -49,6 +53,7 @@ class slr_parser:
 		action = ""
 		while action != "acc":
 			try:
+				print self.stack
 				action = self.LRTable[ int( self.stack[ -1 ] ) ][ self.input[ 0 ] ]
 
 				print "\nStack: ", self.printList( self.stack )
@@ -72,12 +77,14 @@ class slr_parser:
 						# pop the state number at the top of the stack
 						self.stack.pop()
 						# if the token received is not the expected token
-						if self.stack[ -1 ] != token:
-							print "Error at parsing: ", token, " expected. ", self.stack[ -1 ], " gotten."
-							self.error()
-						else:
+						if self.stack[ -1 ] == token:
 							# pop the token for reduction purposes
 							self.stack.pop()
+						elif token == "\'\'":
+							self.stack.pop()
+						else:
+							print "Error at parsing: ", token, " expected. ", self.stack[ -1 ], " gotten."
+							self.error()
 					# find the proper GOTO and append the correct state number
 					latestState = int( self.stack[ -1 ] )
 					stateToAppend = self.LRTable[ latestState ][ left ]
@@ -98,6 +105,8 @@ class slr_parser:
 
 			# key error in parse table or grammar
 			except KeyError, e:
+				print "KEYERROR FK"
+				print self.input
 				self.error()
 				break
 		return response
@@ -106,7 +115,7 @@ class slr_parser:
 		"""
 		Error handling function
 		"""
-		print "error"
+		print "Error"
 		sys.exit( "Leaving program." )
 
 	def grammar( self ):
