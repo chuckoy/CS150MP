@@ -39,7 +39,6 @@ class slr_parser:
 
 		# fill the input with the processed feed
 		for expr in tokens:
-			print expr
 			for code, proc, raw in expr:
 				#print code
 				#print values
@@ -53,12 +52,11 @@ class slr_parser:
 		action = ""
 		while action != "acc":
 			try:
-				print self.stack
 				action = self.LRTable[ int( self.stack[ -1 ] ) ][ self.input[ 0 ] ]
 
-				print "\nStack: ", self.printList( self.stack )
-				print "Input: ", self.printList( self.input )
-				print "Action: ", action
+				# print "\nStack: ", self.printList( self.stack )
+				# print "Input: ", self.printList( self.input )
+				# print "Action: ", action
 
 				# perform a shift action
 				if action[ 0 ] == 's':

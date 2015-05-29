@@ -30,7 +30,5 @@ class ProgLang:
 				tokenTry = values.index( code )
 				subHotfix.append( [ raw, keys[ tokenTry ] ] )
 			hotfix.append( subHotfix )
-		for row in hotfix:
-			print row
 
 progLang = ProgLang( sys.argv[ 1 ] )
