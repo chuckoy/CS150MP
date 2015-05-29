@@ -39,6 +39,9 @@ class dictionaries:
 						'DOT' : 80,
 						'BACKSLASH' : 81 }
 
+		#data types
+		self.DTYPES = ['int','char','float','bool']
+
 	def getReservedWordsDict( self ):
 		return self.RESERVED_WORDS
 
