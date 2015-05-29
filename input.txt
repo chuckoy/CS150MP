@@ -2,8 +2,14 @@ main()
 {
 float a = 1.0;
 float b = 2.0;
-int c = 3;
+float c = 3.0;
+if( a < 4.0 )
+{
 a = a - c;
 b = b - 2.0;
+}
+else
+{
 a = a + c;
+}
 }
