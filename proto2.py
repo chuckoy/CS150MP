@@ -21,8 +21,10 @@ class MenuBar(Tkinter.Menu):
         self.add_command(label="Run", underline=0, command=self.run_program)
 
     def run_program(self):
-        print self.file
-        runterminal = "gnome-terminal - e 'python -i " + self.file + "'"
+        fn = self.getfilename()
+        print fn
+        runterminal = "gnome-terminal -e 'python -i " + fn + "'"
+        print runterminal
         os.system(runterminal)
 
     def new_command(self):
@@ -54,17 +56,26 @@ class MenuBar(Tkinter.Menu):
         if self.file == "":
             self.saveas_command()
         else:
-            g = str(self.file).split(" ")
-            h = g[2].split("\'")
-            filename =  h[1]
+            # g = str(self.file).split(" ")
+            # h = g[2].split("\'")
+            # filename =  h[1]
 
-            file = open(filename, 'w')
+            fn = self.getfilename()
+
+            file = open(fn, 'w')
             save_file = str(self.textPad.get(1.0, END))
             file.write(save_file)
             file.close()
 
     def quit(self):
         sys.exit(0)
+
+    def getfilename(self):
+        g = str(self.file).split(" ")
+        h = g[2].split("\'")
+        filename =  h[1]
+
+        return filename
     
 class App(Tkinter.Tk):
     def __init__(self):
