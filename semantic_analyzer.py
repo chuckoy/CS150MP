@@ -98,6 +98,7 @@ class SemanticAnalyzer:
                 print self.operation_type_checking_and_computation(block)
         #print self.data.data
 
+
 #content[block][elements_of_block]
 
 content = [
