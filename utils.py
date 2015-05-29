@@ -9,6 +9,11 @@ PREC = {
     '-':2,
 }
 
+ERRORS = {
+    'keyvalue':"Key value error",
+
+}
+
 #FUNCTION NOT FUNCTIONAL
 def postToTree(data,tags):
     """

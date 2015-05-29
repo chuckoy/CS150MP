@@ -49,8 +49,13 @@ class SemanticAnalyzer:
             if pref[i] not in OPERATOR:
 
                 if pref_tags[i] == 'IDENT':
-                    val = self.data.data[pref[i]][1]
-                    val_tag = self.data.data[pref[i]][0]
+                    try:
+                        val = self.data.data[pref[i]][1]
+                        val_tag = self.data.data[pref[i]][0]
+                    except:
+                        print "Key value error"
+                        er = 1
+                        break
                 else:
                     val = pref[i]
                     val_tag = pref_tags[i]
@@ -77,11 +82,30 @@ class SemanticAnalyzer:
         else:
             return
 
-    def operations(self,exp):
-        exp_copy = [exp[x][0] in xrange(len(exp))]
-        if '=' == exp[1][0]:
-            var = exp[0][0]
+    def find_semi_colon(self,block):
+        ind = []
+        for x in xrange(len(block)):
+            if block[x] == ';':
+                ind.append(x)
+        return ind
 
+    def copy_lexeme(self,block):
+        return [block[x][0] for x in xrange(len(block))]
+
+    def copy_token(self,block):
+        return [block[x][1] for x in xrange(len(block))]
+
+    def strip_semicolon(self,block):
+        copy_lexeme = self.copy_lexeme(block)
+        copy_token =  self.copy_token(block)
+        ind = self.find_semi_colon(copy_lexeme)
+        for x in xrange(len(ind)):
+            copy_lexeme.pop(ind[x])
+            copy_token.pop(ind[x])
+        ret_value = []
+        for x in xrange(len(copy_lexeme)):
+            ret_value.append( [copy_lexeme[x],copy_token[x]] )
+        return ret_value
 
     """
         Analyzes each line of code.
@@ -90,13 +114,16 @@ class SemanticAnalyzer:
         for block in self.content:
             path = block[0][1]
             if path == 'TYPE':
-                self.declare_variable(block)
+                block_copy = self.strip_semicolon(block)
+                self.declare_variable(block_copy)
                 if self.continue_flag ==0:
                     break
             elif path == 'IDENT':
-                print self.operation_type_checking_and_computation(block)
+                block_copy = self.strip_semicolon(block)
+                print self.operation_type_checking_and_computation(block_copy)
 
-    def analyze_elems(self,block):
+    """
+    def analyze_elems(self,cblock):
         path = block[0][1]
         if path == 'TYPE':
             self.declare_variable(block)
@@ -104,7 +131,7 @@ class SemanticAnalyzer:
                 break
         elif path == 'IDENT':
             print self.operation_type_checking_and_computation(block)   
-
+    """
         #print self.data.data
     def find_condition(self,block):
         leftParen = -1
@@ -120,7 +147,60 @@ class SemanticAnalyzer:
                 break
         return leftParen,rightParen
 
+    def get_groups(self,block):
+        ind = 0
+        groups = []
+        for x in xrange(len(block)):
+            if block[x][0] == '(' or block[x][0] == '{' or block[x][0] == '[':
+                ind = x
+                ind_end = x
+                for trav in xrange(x,len(block)):
+                    if block[trav][0] == ')' or block[trav][0] == '}' or block[trav][0] == ']':
+                        ind_end = trav
+                        break
+                groups.append([ind,ind_end+1])
+                #groups.append(block[ind,ind_end+1])
+        return groups
+
+    def get_per_lines(self,group):
+        group.pop(0)
+        group.pop(len(group)-1)
+
+        lines = []
+        pointer = 0
+        for x in xrange(len(group)):
+            if group[pointer][0] == '{' or group[pointer][0] == '(':
+                pointer += 1
+            if group[x][0] == ';':
+                lines.append([pointer,x])
+                pointer = x + 1
+        return lines
+
+    def get_next_line(self,block,curPoint):
+        curPoint += 1
+        line = []
+
+        for x in xrange(curPoint,len(block)):
+            if block[x][0] != ';':
+                line.append( block[x] )
+            elif block[x][0] == ';':
+                curPoint = x
+                break
+        return line,curPoint
+
+
     def check_condition(self,block,leftParen,rightParen):
+        """
+        Analyzes condition. Current conditions handled are equality/inequality
+        conditions. Also handles TRUE and FALSE conditions.
+
+        :param block: expression.
+        :param leftParen: index of left parenthesis.
+        :param rightParen: index of right parenthesis.
+
+        returns True or False
+
+        """
         if block[leftParen+1][0] == 'TRUE' or block[leftParen+1][0] == 'FALSE':
             if block[leftParen+1][0] == 'TRUE':
                 return True
@@ -132,43 +212,114 @@ class SemanticAnalyzer:
             comp = block[leftParen+3]
             return self.process.compare(cond,[var_value,comp])
 
-    def findBlock(self,block,start):
-
-
+    #def findBlock(self,block,start):
+    """
     def while_handler(self,block):
         lp, rp = self.find_condition(block)
         while( self.check_condition(block,lp,rp) ):
+    """
+
+"""
+    def if_handler(self,block):
+        lp, rp = self.find_condition(block)
+        if (self.check_condition(block,lp,rp)):
+
+"""
 
 
 #content[block][elements_of_block]
-
-content = [
+#"""
+content1 = [
     [
         ['int','TYPE'],
         ['a','IDENT'],
         ['=','ASSIGN_OP'],
-        ['3','CONSTNUM']
+        ['3','CONSTNUM'],
+        [';','SEMICOLON']
+    ],
+    [
+        ['int','TYPE'],
+        ['b','IDENT'],
+        ['=','ASSIGN_OP'],
+        ['4','CONSTNUM'],
+        [';','SEMICOLON']
+    ],
+    [
+        ['a','IDENT'],
+        ['+','ADD_OP'],
+        ['b','IDENT'],
+        [';','SEMICOLON']
+    ]
+]
+#"""
+"""
+content2 = [
+    [
+        ['int','TYPE'],
+        ['c','IDENT'],
+        ['=','ASSIGN_OP'],
+        ['4','CONSTNUM']
         #[';','SEMICOLON']
     ],
     [
         ['int','TYPE'],
         ['b','IDENT'],
         ['=','ASSIGN_OP'],
-        ['4','CONSTNUM']
+        ['2','CONSTNUM']
         #[';','SEMICOLON']
     ],
     [
         ['a','IDENT'],
-        ['+','ADD_OP'],
+        ['/','DIV_OP'],
         ['b','IDENT']
         #[';','SEMICOLON']
     ]
 ]
 
-con
+content3 = [
+    [
+        ['if','CONDITIONAL'],
+        ['(','LEFT_PAREN'],
+        ['a','IDENT'],
+        ['<', ''],
+        [')','RIGHT_PAREN'],
+        ['{','LEFT_CURLY'],
+        ['a','IDENT'],
+        ['=','ASSIGN_OP'],
+        ['a','IDENT'],
+        ['+','ADD_OP'],
+        ['1','CONSTNUM'],
+        [';','SEMICOLON'],
+        ['}','RIGHT_CURLY']
+    ]
+]
+"""
+"""
+if_stmt = [ 
 
+        ['if','CONDITIONAL'],
+        ['(','LEFT_PAREN'],
+        ['a','IDENT'],
+        ['<', 'LESS_REL_OP'],
+        ['3','CONSTNUM'],
+        [')','RIGHT_PAREN'],
+        ['{','LEFT_CURLY'],
+        ['a','IDENT'],
+        ['=','ASSIGN_OP'],
+        ['a','IDENT'],
+        ['+','ADD_OP'],
+        ['1','CONSTNUM'],
+        [';','SEMICOLON'],
+        ['}','RIGHT_CURLY']
 
+]
+"""
 d = dictionaries()
-s = SemanticAnalyzer(content=content,types=d.DTYPES)
+s = SemanticAnalyzer(types=d.DTYPES,content=content1)
 
 s.analyze_block()
+
+"""
+s.setContent(content2)
+s.analyze_block()
+"""

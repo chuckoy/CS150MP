@@ -9,7 +9,7 @@ class dictionaries:
 								'else' : 'CONDITIONAL',
 								'foreach' : 'LOOP',
 								'for' : 'LOOP',
-								'while' : 'LOOP'
+								'while' : 'LOOP',
 								'in' : 'IN',
 								'return' : 'RETURN',
 								'or' : 'LOGIC',
