@@ -77,7 +77,6 @@ class SemanticAnalyzer:
         else:
             return
 
-
     def operations(self,exp):
         exp_copy = [exp[x][0] in xrange(len(exp))]
         if '=' == exp[1][0]:
@@ -96,7 +95,49 @@ class SemanticAnalyzer:
                     break
             elif path == 'IDENT':
                 print self.operation_type_checking_and_computation(block)
+
+    def analyze_elems(self,block):
+        path = block[0][1]
+        if path == 'TYPE':
+            self.declare_variable(block)
+            if self.continue_flag ==0:
+                break
+        elif path == 'IDENT':
+            print self.operation_type_checking_and_computation(block)   
+
         #print self.data.data
+    def find_condition(self,block):
+        leftParen = -1
+        rightParen = -1
+        for x in xrange(len(block)):
+            if block[x][1] == 'LEFT_PAREN':
+                leftParen = x
+                break
+
+        for x in xrange(len(block)):
+            if block[x][1] == 'RIGHT_PAREN':
+                rightParen = x
+                break
+        return leftParen,rightParen
+
+    def check_condition(self,block,leftParen,rightParen):
+        if block[leftParen+1][0] == 'TRUE' or block[leftParen+1][0] == 'FALSE':
+            if block[leftParen+1][0] == 'TRUE':
+                return True
+            else:
+                return False
+        else:
+            var_value = self.data.data[block[leftParen+1]][1]
+            cond = block[leftParen+2]
+            comp = block[leftParen+3]
+            return self.process.compare(cond,[var_value,comp])
+
+    def findBlock(self,block,start):
+
+
+    def while_handler(self,block):
+        lp, rp = self.find_condition(block)
+        while( self.check_condition(block,lp,rp) ):
 
 
 #content[block][elements_of_block]
@@ -123,6 +164,8 @@ content = [
         #[';','SEMICOLON']
     ]
 ]
+
+con
 
 
 d = dictionaries()

@@ -35,6 +35,29 @@ class BinTree(Tree):
 class Process:
     def __init__(self):
         return
+
+    def compare(self,id_,args):
+        if id_ == '==':
+            if args[0] == args[1]:
+                return True
+            return False
+        elif id_ == '>':
+            if args[0] > args[1]:
+                return True
+            return False
+        elif id_ == '<':
+            if args[0] < args[1]:
+                return True
+            return False
+        elif id_ == '>=':
+            if args[0] >= args[1]:
+                return True
+            return False
+        elif id_ == '<=':
+            if args[0] <= args[1]:
+                return True
+            return False
+
     def perform(self,id_,args):
         if id_ == '+':
             return self.add(args)
