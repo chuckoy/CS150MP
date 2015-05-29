@@ -1,5 +1,37 @@
 from dictionaries import *
 
+class Tree:
+    def __init__(self,data=None,children=[],parent=None):
+        self.data = data
+        self.parent = parent
+        self.children = children
+
+    def setData(self,data):
+        self.data = data
+
+    def addChild(self,child):
+        if child in self.children:
+            pass
+        else:
+            self.children.append(child)
+
+    def setParent(self,parent):
+        self.parent = parent
+
+class BinTree(Tree):
+    def __init__(self,data=None,rChild=None,lChild=None,parent=None,canHaveChild=1):
+        self.data = data
+        self.rChild = rChild
+        self.lChild = lChild
+        self.parent = parent
+        self.canHaveChild = canHaveChild
+
+    def addChild(self,child,lr):
+        if lr == 'l':
+            self.lChild = child
+        else:
+            self.rChild = child
+
 class Process:
     def __init__(self):
         return
@@ -73,10 +105,14 @@ class Data:
 
     """
         Modify the value of an existing variable if it exists,
-        return an error if variable does not exist
+        return an error if variable does not exist or if the 
+        variable and the new value don't match types
     """
     def modifyData(self,var,newValue):
-        if self.checkDataType(newValue) == self.data[var][0]:
-            self.data[var][1] = newValue
-        else:
-            print "Type mismatch."
+        try:
+            if self.checkDataType(newValue) == self.data[var][0]:
+                self.data[var][1] = newValue
+            else:
+                print "Type mismatch."
+        except:
+            print "Variable %s has not been declared." % var
