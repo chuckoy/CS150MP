@@ -22,9 +22,7 @@ class MenuBar(Tkinter.Menu):
 
     def run_program(self):
         fn = self.getfilename()
-        print fn
-        runterminal = "gnome-terminal -e 'python -i " + fn + "'"
-        print runterminal
+        runterminal = "gnome-terminal -e 'python -i prog_lang.py "+ fn  + "'"
         os.system(runterminal)
 
     def new_command(self):
