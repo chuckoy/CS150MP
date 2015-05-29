@@ -18,7 +18,12 @@ class MenuBar(Tkinter.Menu):
         fileMenu.add_command(label="Save", underline=0,command=self.save_command)
         fileMenu.add_command(label="Save As", underline=5,command=self.saveas_command)          
         fileMenu.add_command(label="Exit", underline=0, command=self.quit)
-        self.add_command(label="Run", underline=0, command=self.quit)
+        self.add_command(label="Run", underline=0, command=self.run_program)
+
+    def run_program(self):
+        print self.file
+        runterminal = "gnome-terminal - e 'python -i " + self.file + "'"
+        os.system(runterminal)
 
     def new_command(self):
         if len(str(self.textPad.get(1.0, END)))>1:
