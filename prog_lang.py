@@ -17,10 +17,18 @@ class ProgLang:
 		self.runProgram()
 
 	def runProgram( self ):
+		keys = self.dicts.getTokenDict().keys()
+		values = self.dicts.getTokenDict().values()
+
 		# insert logic for running program here
 		self.tokens = self.lexical.run()
 		self.parsed = self.parser.run( self.tokens )
-		for row in self.parsed:
-			print row
+		hotfix = []
+		for expr in self.tokens:
+			subHotfix = []
+			for code, proc, raw in expr:
+				tokenTry = values.index( code )
+				subHotfix.append( [ raw, keys[ tokenTry ] ] )
+			hotfix.append( subHotfix )
 
 progLang = ProgLang( sys.argv[ 1 ] )
