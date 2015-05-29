@@ -22,16 +22,22 @@ class SemanticAnalyzer:
     def declare_variable(self,exp):
         t = exp[0][0]
         var = exp[1][0]
-        if exp[2][1] == 'SEMICOLON':
-            self.data.addData([var,t,None])
-        elif exp[2][1] == 'ASSIGN_OP':
-            if exp[3][1] == 'CONSTNUM':
-                val = int(exp[3][0])
-            if self.data.checkDataType(val) == t:
-                self.data.addData([var,t,val])
-            else:
-                print "Type mismatch."
-                self.continue_flag = 0
+        l = len(exp)
+        if l > 2:
+            if exp[2][1] == 'SEMICOLON':
+                self.data.addData([var,t,None])
+            elif exp[2][1] == 'ASSIGN_OP':
+                if exp[3][1] == 'CONSTNUM':
+                    val = int(exp[3][0])
+                if self.data.checkDataType(val) == t:
+                    self.data.addData([var,t,val])
+                else:
+                    print "Type mismatch."
+                    self.continue_flag = 0
+        else:
+            if exp[0][0] == 'int':
+                self.data.addData([var,t,0])
+        
 
     def operation_type_checking_and_computation(self,exp):
         tags = [exp[x][1] for x in xrange(len(exp))]
@@ -102,6 +108,8 @@ class SemanticAnalyzer:
         for x in xrange(len(ind)):
             copy_lexeme.pop(ind[x])
             copy_token.pop(ind[x])
+            for x in xrange( len(ind)):
+                ind[ x ] -= 1
         ret_value = []
         for x in xrange(len(copy_lexeme)):
             ret_value.append( [copy_lexeme[x],copy_token[x]] )
@@ -121,7 +129,10 @@ class SemanticAnalyzer:
             elif path == 'IDENT':
                 block_copy = self.strip_semicolon(block)
                 print self.operation_type_checking_and_computation(block_copy)
-
+        self.print_data()
+    def print_data(self):
+        for key in self.data.data.keys():
+            print "Varname: ", key, " datatype, value: ", self.data.data[key]
     """
     def analyze_elems(self,cblock):
         path = block[0][1]

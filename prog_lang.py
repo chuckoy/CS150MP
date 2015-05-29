@@ -22,7 +22,21 @@ class ProgLang:
 
 		# insert logic for running program here
 		self.tokens = self.lexical.run()
-		#self.parsed = self.parser.run( self.tokens )
+		self.parsed = self.parser.run( self.tokens )
+	
+		main = [ 'main', 'MAIN' ]
+		for row in self.parsed:
+			if main in row:
+				row.pop( 0 )
+				row.pop( 0 )
+				row.pop( 0 )
+				row.pop( 0 )
+		self.parsed.pop( -1 )
+		for row in self.parsed:
+			print row, "RTEST"
+
+		"""
+		# while semantics not fixed lel
 		hotfix = []
 		for expr in self.tokens:
 			subHotfix = []
@@ -33,7 +47,8 @@ class ProgLang:
 					second = "CONSTNUM"
 				subHotfix.append( [ raw, second ] )
 			hotfix.append( subHotfix )
-		self.semantic = SemanticAnalyzer( types = self.dicts.DTYPES, content = hotfix )
+		"""
+		self.semantic = SemanticAnalyzer( types = self.dicts.DTYPES, content = self.parsed )
 		self.semantic.analyze_block()
 
 progLang = ProgLang( sys.argv[ 1 ] )

@@ -9,6 +9,7 @@ class lexical_analyser:
 		self.lexeme = []
 		self.charClass = 0
 		self.nextChar = ''
+		self.leftCount = 0
 		self.inFileName = inFileName
 		# character classes
 		self.CHAR_CLASSES = {	'EOF' : -1,	
@@ -35,10 +36,13 @@ class lexical_analyser:
 		with open( self.inFileName, 'r' ) as self.in_fp:
 			while self.charClass != self.CHAR_CLASSES[ 'EOF' ]:
 				currExpr.append( self.lex() )
-				if self.nextToken == self.TOKEN[ 'SEMICOLON' ]:
+				if self.nextToken == self.TOKEN[ 'SEMICOLON' ] or self.nextToken == self.TOKEN[ 'RIGHT_CURLY' ]:
+					"""
+					while self.leftCount > 0:
+						currExpr.append( self.lex() )
+					"""
 					tokens.append( currExpr )
 					currExpr = []
-		#tokens.append( [ ( -1, "EOF" ) ] )
 		return tokens
 
 	def error( self, receivedNum, expectedNum ):
@@ -108,8 +112,10 @@ class lexical_analyser:
 			self.nextToken = self.TOKEN[ 'SEMICOLON' ]
 		elif ch == '{':
 			self.nextToken = self.TOKEN[ 'LEFT_CURLY' ]
+			self.leftCount += 1
 		elif ch == '}':
 			self.nextToken = self.TOKEN[ 'RIGHT_CURLY' ]
+			self.leftCount -= 1
 		elif ch == '.':
 			self.nextToken = self.TOKEN[ 'DOT' ]
 		elif ch == '\\':
@@ -164,11 +170,11 @@ class lexical_analyser:
 			# case float
 			if dotFlag == 1:
 				self.nextToken = self.TOKEN[ 'FLOAT_LIT' ]
-				self.lexeme = "FLOATCONST"
+				self.lexeme = "CONSTFLOAT"
 			# case int
 			else:
 				self.nextToken = self.TOKEN[ 'INT_LIT' ]
-				self.lexeme = "NUMCONST"
+				self.lexeme = "CONSTNUM"
 		# cases + or -, check if unary operator or just operator
 		elif self.charClass == self.CHAR_CLASSES[ 'ADD' ]:
 			self.addChar()

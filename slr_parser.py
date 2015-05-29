@@ -53,11 +53,11 @@ class slr_parser:
 		while action != "acc":
 			try:
 				action = self.LRTable[ int( self.stack[ -1 ] ) ][ self.input[ 0 ] ]
-
-				# print "\nStack: ", self.printList( self.stack )
-				# print "Input: ", self.printList( self.input )
-				# print "Action: ", action
-
+				"""
+				print "\nStack: ", self.printList( self.stack )
+				print "Input: ", self.printList( self.input )
+				print "Action: ", action
+				"""
 				# perform a shift action
 				if action[ 0 ] == 's':
 					self.stack.append( self.input.pop( 0 ) )
@@ -73,13 +73,13 @@ class slr_parser:
 					rightList.reverse()
 					for token in rightList:
 						# pop the state number at the top of the stack
-						self.stack.pop()
+						temp = self.stack.pop()
 						# if the token received is not the expected token
 						if self.stack[ -1 ] == token:
 							# pop the token for reduction purposes
 							self.stack.pop()
 						elif token == "\'\'":
-							self.stack.pop()
+							self.stack.append( temp )
 						else:
 							print "Error at parsing: ", token, " expected. ", self.stack[ -1 ], " gotten."
 							self.error()
@@ -91,13 +91,16 @@ class slr_parser:
 
 				# finished parsing; process output properly
 				elif action == 'acc':
-					print "Done"
+					print "Syntax analysis done"
 					response = []
 					for expr in tokens:
 						subResponse = []
 						for code, proc, raw in expr:
 							tokenTry = values.index( code )
-							subResponse.append( [ raw, keys[ tokenTry ] ] )
+							second = keys[ tokenTry ]
+							if second == "INT_LIT" or second == "FLOAT_LIT":
+								second = "CONSTNUM"
+							subResponse.append( [ raw, second ] )
 						response.append( subResponse )
 					break
 

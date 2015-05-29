@@ -13,7 +13,7 @@ var-decl-initialize -> var-decl-id = [ simple-expression-list ]
 simple-expression-list -> simple-expression-list , simple-expression
 simple-expression-list -> simple-expression
 var-decl-id -> ID 
-var-decl-id -> ID [ NUMCONST ] 
+var-decl-id -> ID [ CONSTNUM ] 
 scoped-type-specifier -> type-specifier 
 type-specifier -> int 
 type-specifier -> bool 
@@ -115,8 +115,8 @@ args -> ''
 arg-list -> arg-list , expression 
 arg-list -> expression 
 constant -> const
-const -> NUMCONST
-const -> FLOATCONST
+const -> CONSTNUM
+const -> CONSTFLOAT
 const -> CHARCONST 
 const -> bool_value	
 bool_value -> true
