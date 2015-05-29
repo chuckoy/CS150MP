@@ -29,6 +29,8 @@ class SemanticAnalyzer:
             elif exp[2][1] == 'ASSIGN_OP':
                 if exp[3][1] == 'CONSTNUM':
                     val = int(exp[3][0])
+                elif exp[ 3 ][ 1 ] == 'CONSTFLOAT':
+                    val = float( exp[ 3 ][ 0 ] )
                 if self.data.checkDataType(val) == t:
                     self.data.addData([var,t,val])
                 else:
@@ -74,6 +76,14 @@ class SemanticAnalyzer:
 
                 op1_tag = stack_tags.pop()
                 op2_tag = stack_tags.pop()
+                if op2_tag == "CONSTNUM":
+                    op2 = int( op2 )
+                if op2_tag == "CONSTFLOAT":
+                    op2 = float( op2 )
+                if op1_tag == "CONSTNUM":
+                    op1 = int( op1 )
+                if op1_tag == "CONSTFLOAT":
+                    op1 = float( op1 )
                 res = self.process.perform(pref[i],[op1,op2])
 
                 #IF THERE IS NO ERROR IN COMPUTATION
@@ -84,7 +94,7 @@ class SemanticAnalyzer:
                     er = 1
                     break
         if not er:
-            return stack.pop(),stack_tags.pop()
+            return stack.pop()
         else:
             return
 
@@ -119,7 +129,9 @@ class SemanticAnalyzer:
         Analyzes each line of code.
     """
     def analyze_block(self):
+        index = 0
         for block in self.content:
+            index += 1
             path = block[0][1]
             if path == 'TYPE':
                 block_copy = self.strip_semicolon(block)
@@ -127,9 +139,42 @@ class SemanticAnalyzer:
                 if self.continue_flag ==0:
                     break
             elif path == 'IDENT':
-                block_copy = self.strip_semicolon(block)
-                print self.operation_type_checking_and_computation(block_copy)
+                if block[1][1] == 'ASSIGN_OP':
+                    copy_lexeme = self.copy_lexeme(block)
+                    copy_token = self.copy_token(block)
+                    copy_lexeme = copy_lexeme[2::]
+                    copy_token = copy_token[2::]
+                    new_block = [[x,y] for x,y in zip(copy_lexeme,copy_token)]
+                    new_block = self.strip_semicolon(new_block)
+                    val = self.operation_type_checking_and_computation(new_block)
+                    self.data.modifyData(block[0][0],val)
+                else:
+                    block_copy = self.strip_semicolon(block)
+                    self.operation_type_checking_and_computation(block_copy)
         self.print_data()
+
+    def analyze_line(self, block):
+        path = block[0][1]
+        if path == 'TYPE':
+            block_copy = self.strip_semicolon(block)
+            self.declare_variable(block_copy)
+        elif path == 'IDENT':
+            if block[1][1] == 'ASSIGN_OP':
+                copy_lexeme = self.copy_lexeme(block)
+                copy_token = self.copy_token(block)
+                copy_lexeme = copy_lexeme[2::]
+                copy_token = copy_token[2::]
+                new_block = [[x,y] for x,y in zip(copy_lexeme,copy_token)]
+                new_block = self.strip_semicolon(new_block)
+                val = self.operation_type_checking_and_computation(new_block)
+                self.data.modifyData(block[0][0],val)
+            else:
+                block_copy = self.strip_semicolon(block)
+                self.operation_type_checking_and_computation(block_copy)
+        elif path == 'CONDITIONAL':
+            self.if_handler( block, self.content, index )
+        self.print_data()
+
     def print_data(self):
         for key in self.data.data.keys():
             print "Varname: ", key, " datatype, value: ", self.data.data[key]
@@ -222,3 +267,38 @@ class SemanticAnalyzer:
             cond = block[leftParen+2]
             comp = block[leftParen+3]
             return self.process.compare(cond,[var_value,comp])
+    
+    def find_left_curly(self,block):
+        ind = []
+        for x in xrange(len(block)):
+            if block[x][0] == '{':
+                ind.append(x)
+        return ind
+
+    #def get_if_lines(self,block):
+
+    """
+    def if_handler(self,block, total, blockInd):
+        lp, rp = self.find_condition( block )
+
+        if self.check_condition( block[lp + 1 : rp ], lp, rp ):
+            print "true"
+        ind = self.find_left_curly(block)
+
+        copy_lexeme = self.copy_lexeme(block)
+        copy_token = self.copy_token(block)
+
+        copy_lexeme = copy_lexeme[ind[0]+1::]
+        copy_token = copy_token[ind[0]+1::]
+        new_block = [[x,y] for x,y in zip(copy_lexeme,copy_token)]
+
+        rightCurlyTest = [ [ '}', 'RIGHT_CURLY' ] ]
+        next_block = total[ blockInd ]
+        while next_block != rightCurlyTest:
+            self.analyze_line( next_block )
+            # move to the next block
+            blockInd += 1
+            next_block = total[ blockInd ]
+        print next_block
+        #if( self.check_condition(block,lp,rp) ):
+    """

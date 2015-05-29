@@ -98,8 +98,10 @@ class slr_parser:
 						for code, proc, raw in expr:
 							tokenTry = values.index( code )
 							second = keys[ tokenTry ]
-							if second == "INT_LIT" or second == "FLOAT_LIT":
+							if second == "INT_LIT":
 								second = "CONSTNUM"
+							if second == "FLOAT_LIT":
+								second = "CONSTFLOAT"
 							subResponse.append( [ raw, second ] )
 						response.append( subResponse )
 					break

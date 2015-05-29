@@ -32,8 +32,6 @@ class ProgLang:
 				row.pop( 0 )
 				row.pop( 0 )
 		self.parsed.pop( -1 )
-		for row in self.parsed:
-			print row, "RTEST"
 
 		"""
 		# while semantics not fixed lel

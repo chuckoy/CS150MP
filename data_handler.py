@@ -133,6 +133,7 @@ class Data:
     """
     def modifyData(self,var,newValue):
         try:
+            #print newValue
             if self.checkDataType(newValue) == self.data[var][0]:
                 self.data[var][1] = newValue
             else:
