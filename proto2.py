@@ -56,10 +56,6 @@ class MenuBar(Tkinter.Menu):
         if self.file == "":
             self.saveas_command()
         else:
-            # g = str(self.file).split(" ")
-            # h = g[2].split("\'")
-            # filename =  h[1]
-
             fn = self.getfilename()
 
             file = open(fn, 'w')
@@ -85,12 +81,9 @@ class App(Tkinter.Tk):
         menubar = MenuBar(self,textPad)
         
         self.config(menu=menubar)
-        #textPad.grid(row=0,column=0)
-        #interpreter.grid(row=1,column=0)
         textPad.pack(fill='both',expand=True,padx=3,pady=3)
-        interpreter.pack(fill='both',expand=True,padx=3,pady=3)
 if __name__ == "__main__":
     app = App()
     app.title('Tanders Programming Language') 
-    app.geometry("900x900")
+    app.geometry("900x600")
     app.mainloop()
