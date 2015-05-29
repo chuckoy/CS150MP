@@ -9,13 +9,16 @@ class dictionaries:
 								'else' : 'CONDITIONAL',
 								'foreach' : 'LOOP',
 								'for' : 'LOOP',
-								'in': 'IN',
-								'return': 'RETURN',
-								'or': 'LOGIC',
-								'and': 'LOGIC',
-								'not': 'LOGIC',
-								'true': 'TRUTH',
-								'false': 'TRUTH',
+								'while' : 'LOOP'
+								'in' : 'IN',
+								'return' : 'RETURN',
+								'or' : 'LOGIC',
+								'and' : 'LOGIC',
+								'not' : 'LOGIC',
+								'true' : 'TRUTH',
+								'false' : 'TRUTH',
+								'print' : 'IO',
+								'scan' : 'IO',
 								'break' : 'BREAK' }
 
 		# token codes
