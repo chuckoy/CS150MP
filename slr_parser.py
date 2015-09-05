@@ -43,6 +43,7 @@ class slr_parser:
 				#print code
 				#print values
 				#print keys
+				print code, proc, raw
 				tokenTry = values.index( code )
 				self.input.append( proc )
 		# append $ to notify end of feed

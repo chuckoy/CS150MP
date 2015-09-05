@@ -120,6 +120,8 @@ class lexical_analyser:
 			self.nextToken = self.TOKEN[ 'DOT' ]
 		elif ch == '\\':
 			self.nextToken = self.TOKEN[ 'BACKSLASH' ]
+		elif ch == '\"':
+			self.nextToken = self.TOKEN[ 'DOUBLE_QUOTE' ]
 		else:
 			self.nextToken = self.CHAR_CLASSES[ 'EOF' ]
 		self.getChar()

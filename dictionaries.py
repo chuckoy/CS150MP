@@ -59,6 +59,7 @@ class dictionaries:
 						'TRUTH' : 606,
 						'IO' : 607,
 						'BREAK' : 608,
+						'DOUBLE_QUOTE' : 609,
 						'MAIN' : 999
 						 }
 
